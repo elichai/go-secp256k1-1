@@ -1,0 +1,26 @@
+os:
+  - linux
+  - windows
+  - osx
+
+arch:
+  - amd64
+  - ppc64le
+  - s390x
+  - arm64
+
+language: go
+
+go:
+  - 1.x
+  - master
+
+before_install:
+  - go get -u golang.org/x/lint/golint
+
+script:
+  - set -o pipefail
+  # gofmt uses the OS default settings, so this will try to re-format everything under windows https://github.com/golang/go/issues/16355
+  - output=$(gofmt -d .); if [[ ${TRAVIS_OS_NAME} != "windows" && ${output} ]]; then echo "$output"; false; fi
+  - golint -set_exit_status
+  - go test -v
